@@ -1,3 +1,4 @@
-2023-04-03 20:45:55,441, INFO, Scheduler started
-2023-04-03 20:46:17,990, INFO, Received signal 2 (SIGINT), stopping...
-2023-04-03 20:46:17,990, INFO, Scheduler has been shut down
+2023-04-04 11:44:45,746, INFO, Scheduler started
+2023-04-04 11:46:06,521, INFO, Received signal 2 (SIGINT), stopping...
+2023-04-04 11:46:06,521, INFO, Scheduler has been shut down
+2023-04-04 11:46:13,045, WARNING, Exiting immediately!
