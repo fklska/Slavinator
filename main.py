@@ -4,10 +4,12 @@ from telegram.ext import CommandHandler, MessageHandler, Updater, Filters
 from account import Account
 from openpyxl import Workbook, load_workbook
 from openpyxl.styles import Border, NamedStyle, Side, Alignment
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
 
-updater = Updater(token='5931393528:AAGAWkOyIURPzq-BKHr7HDutyqWtxZdThQw')
-URL = 'https://api.thecatapi.com/v1/images/search'
+updater = Updater(token=os.getenv('TOKEN'))
 
 
 def text_format(text):

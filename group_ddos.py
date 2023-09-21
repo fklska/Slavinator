@@ -1,7 +1,11 @@
 from telegram import Bot
 from time import sleep
+from dotenv import load_dotenv
+import os
 
-bot = Bot(token='5931393528:AAGAWkOyIURPzq-BKHr7HDutyqWtxZdThQw')
+load_dotenv()
+
+bot = Bot(token=os.getenv('TOKEN'))
 
 
 def main():
