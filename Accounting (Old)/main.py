@@ -1,7 +1,7 @@
 import requests
 from telegram import ReplyKeyboardMarkup, Bot, File
 from telegram.ext import CommandHandler, MessageHandler, Updater, Filters
-from account import Account
+from Accounting.account import Account
 from openpyxl import Workbook, load_workbook
 from openpyxl.styles import Border, NamedStyle, Side, Alignment
 import os
