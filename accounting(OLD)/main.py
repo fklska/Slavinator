@@ -1,6 +1,6 @@
 import requests
 from telegram import ReplyKeyboardMarkup, Bot, File
-from telegram.ext import CommandHandler, MessageHandler, Updater, Filters
+from telegram.ext import CommandHandler, MessageHandler, Updater, filters
 from account import Account
 from openpyxl import Workbook, load_workbook
 from openpyxl.styles import Border, NamedStyle, Side, Alignment
@@ -58,7 +58,7 @@ def create_account(dic, start_dic):
     return accounts
 
 
-def account_entires(dic, accounts):
+def account_entires(dic, accounts: [Account]):
     count = 1
     for wire in dic.values():
         array = wire.split(' ')
@@ -324,8 +324,8 @@ def main():
     #create_excel(account_entires(read_excel()['Wire'], create_account(read_excel()['Wire'], read_excel()['Start'])))
 
     updater.dispatcher.add_handler(CommandHandler('start', start))
-    updater.dispatcher.add_handler(MessageHandler(Filters.document, get_file))
-    updater.dispatcher.add_handler(MessageHandler(Filters.text, get_codes))
+    updater.dispatcher.add_handler(MessageHandler(filters.Document, get_file))
+    updater.dispatcher.add_handler(MessageHandler(filters.Text, get_codes))
     updater.start_polling()
     updater.idle()
 
