@@ -1,26 +1,26 @@
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, InlineQueryResultArticle, ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove, InputTextMessageContent, InlineQuery, Invoice, LabeledPrice, WebAppInfo
-from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes, CallbackQueryHandler, MessageHandler, InlineQueryHandler, filters
-from dotenv import load_dotenv
 import os
-import base_classes
 from uuid import uuid4
-from html import escape
-from telegram.constants import ParseMode
-import json
+
+import base_classes
+import excel
+from dotenv import load_dotenv
+from telegram import (File, InlineKeyboardButton, InlineKeyboardMarkup,
+                      InlineQueryResultArticle, InputTextMessageContent,
+                      LabeledPrice, Update, WebAppInfo)
+from telegram.ext import (ApplicationBuilder, CallbackQueryHandler,
+                          CommandHandler, ContextTypes, InlineQueryHandler,
+                          MessageHandler, filters)
 
 load_dotenv()
 
 check_mail = base_classes.Email()
+check_excel = excel.Excel()
 
 
 async def hello(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_text(
-        f'Hello {update.effective_user.first_name}',
-
-    )
 
     await update.message.reply_html(
-        "<code> Pick color test_code</code>.",
+        f'Hello {update.effective_user.first_name} <code> Pick color test_code</code>.',
     )
 
     await update.message.reply_invoice(
@@ -41,15 +41,26 @@ async def commands(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     keyboard = [
         [
             InlineKeyboardButton("Отправить email", callback_data='email'),
-            InlineKeyboardButton("Option 2 in line 1", web_app=WebAppInfo('https://github.com/fklska'))
+            InlineKeyboardButton(
+                "Написать Проводки в Excel",
+                callback_data='excel'
+            )
         ],
-        [InlineKeyboardButton("Option 3 line 2", web_app=WebAppInfo("https://python-telegram-bot.org/static/webappbot"))],
+        [
+            InlineKeyboardButton(
+                "Option 3 line 2",
+                web_app=WebAppInfo("https://python-telegram-bot.org/static/webappbot")
+                )
+        ],
 
     ]
 
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    await update.message.reply_text("Доступные команды", reply_markup=reply_markup)
+    await update.message.reply_text(
+        "Доступные команды",
+        reply_markup=reply_markup
+    )
 
 
 async def callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -62,19 +73,21 @@ async def callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         await query.answer(text="Введи email адрес")
         check_mail.bool = True
 
-    if query.data == 2:
-        await query.answer(text='Test')
+    if query.data == 'excel':
+        await context.bot.send_message(
+            chat_id=update.effective_chat.id,
+            text="Скинь файл xlsx"
+        )
+        await query.answer(text='Введите данные')
+        check_excel.bool = True
 
-    await query.answer(text=query.data)
+    #await query.answer(text=query.data)
 
 
 async def inline_query(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     query = update.inline_query.query
 
     if not query:
-        return
-
-    if '.com' not in query:
         return
 
     results = [
@@ -112,15 +125,34 @@ async def workflow(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             await update.message.reply_text("Введите текст:")
 
 
-async def web_app_data(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Print the received data and remove the button."""
-    # Here we use `json.loads`, since the WebApp sends the data JSON serialized string
-    # (see webappbot.html)
-    print(update.effective_message.web_app_data)
-    data = json.loads(update.effective_message.web_app_data.data)
-    await update.message.reply_html(
-        f'<code>{data}</code>'
-    )
+async def get_file(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if check_excel.bool:
+        file = await update.message.document.get_file()
+        await File.download_to_drive(
+            file,
+            custom_path='v1/excel/example.xlsx'
+        )
+
+        await update.message.reply_text(
+            text='Файл получен'
+        )
+
+        print(f'Сообщение отправлено for User: {update.effective_user.username}, В чат: {update.effective_chat.id}')
+        read_data = check_excel.read_excel()
+        check_excel.create_excel(
+            check_excel.account_entires(
+                read_data['Wire'],
+                check_excel.create_account(
+                    read_data['Wire'],
+                    read_data['Start']
+                )
+            )
+        )
+
+        await update.message.reply_document(
+            document=open('v1/excel/sample.xlsx', 'rb')
+        )
+        check_excel.bool = False
 
 
 def main():
@@ -128,7 +160,7 @@ def main():
 
     app.add_handler(CommandHandler("start", hello))
     app.add_handler(CallbackQueryHandler(callback))
-    app.add_handler(MessageHandler(filters.StatusUpdate.WEB_APP_DATA, web_app_data))
+    app.add_handler(MessageHandler(filters.Document.ALL, get_file))
     app.add_handler(MessageHandler(None, workflow))
     app.add_handler(InlineQueryHandler(inline_query))
 
