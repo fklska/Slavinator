@@ -18,5 +18,5 @@ Will help you
   </p>
 </article>
 <div id="header" align="center">
-  <img src="https://i.imgur.com/Vrh9CMG.gif" width="200"/>
+  <img src="https://i.imgur.com/CcxoCn5.gif" width="400"/>
 </div>
