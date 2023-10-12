@@ -76,9 +76,17 @@ async def callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if query.data == 'excel':
         await context.bot.send_message(
             chat_id=update.effective_chat.id,
-            text="Скинь файл xlsx"
+            text='Привет, это бот который будет помогать тебе делать задачи по бух учету \nТебе нужно отправить данные в excel таблице чтобы бот смог их проанализировать \nВот пример: ',
         )
-        await query.answer(text='Введите данные')
+        await context.bot.send_document(
+            chat_id=update.effective_chat.id,
+            document=open('v1/excel/template.xlsx', 'rb'),
+        )
+        await context.bot.send_message(
+            chat_id=update.effective_chat.id,
+            text="Есть несколько важных особенностей: \n 1) Счета и суммы отделяй пробелом \n 2) Новый счет/новая проводка = новая строчка \n 3) Если Excel сам форматирует числа и удаляет пробелы между ними ставь ' перед данными \n 4) Бот начинает читать файл со 2 строчки \n 5) Про активно-пассивные счета: такие счета считаются сразу для двух сторон как активный, так и пассивный. Если в вашем случае он пассивный значит ваша колонка кредита. Если а-п счет указывается в начальном балансе 2 раза он считается с двумя Сн",
+        )
+        await query.answer(text='Скинь файл excel')
         check_excel.bool = True
 
     #await query.answer(text=query.data)
