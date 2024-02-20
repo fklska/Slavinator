@@ -10,3 +10,4 @@ venv/
 .venv/
 ENV/
 .site-packages/
+.excel/

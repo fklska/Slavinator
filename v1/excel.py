@@ -100,7 +100,7 @@ class Excel:
 
         return accounts
 
-    def account_entires(self, dic, accounts: [Account]):
+    def account_entires(self, dic, accounts: list[Account]):
         """
         Func to write data in Account objects.
         """
@@ -119,9 +119,10 @@ class Excel:
                 except IndexError:
                     return 'Введи нормальные данные'
             count += 1
+
         for acc in accounts:
-            acc.get_gross_debet()
-            acc.get_gross_credit()
+            #acc.get_gross_debet()
+            #acc.get_gross_credit()
             acc.get_status()
             acc.get_closing_saldo()
         return accounts

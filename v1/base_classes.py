@@ -22,8 +22,6 @@ class Account:
         self.debet = {
 
         }
-        self.gross_debet = 0
-        self.gross_credit = 0
 
         self.opening_balance = int(opening_balance)
         self.opening_balance_credit = int(opening_balance_credit)
@@ -52,17 +50,19 @@ class Account:
     def get_credit(self, operation_number, summ):
         self.credit[operation_number] = summ
 
-    def get_gross_debet(self):
+    @property
+    def gross_debet(self):
         summ = 0
         for i in self.debet:
             summ = summ + int(self.debet[i])
-        self.gross_debet = summ
+        return summ
 
-    def get_gross_credit(self):
+    @property
+    def gross_credit(self):
         summ = 0
         for i in self.credit:
             summ = summ + int(self.credit[i])
-        self.gross_credit = summ
+        return summ
 
     def get_closing_saldo(self):
         if self.status == 'Active':
