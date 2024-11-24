@@ -22,3 +22,9 @@
 <div id="header" align="center">
   <img src="https://i.imgur.com/DHSJ7eq.gif" width="800"/>
 </div>
+
+
+### How to Start - NEED TO CREATE YOURSELF TELEGRAM BOT
+1. git clone https://github.com/fklska/Slavinator
+2. python -m venv venv | sourse venv activate
+3. run main.py
